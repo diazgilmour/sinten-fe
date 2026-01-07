@@ -20,11 +20,34 @@ import {
   Truck,
 } from "lucide-react";
 import api from "../services/api";
-import { TUJUAN_SURAT } from "../utils/constants";
 
 // --- IMPORT LOGO ---
 import logoSinten from "../assets/sinten.png";
 // ------------------
+
+// --- DATA TUJUAN SURAT (UPDATE: Mencakup semua bagian disposisi) ---
+// Data ini diambil dari referensi DetailSurat.jsx agar sinkron
+const TUJUAN_SURAT = [
+  // Pimpinan
+  { value: "ketua_dprd", label: "Ketua DPRD" },
+  { value: "wakil_ketua_i", label: "Wakil Ketua I" },
+  { value: "wakil_ketua_ii", label: "Wakil Ketua II" },
+  { value: "wakil_ketua_iii", label: "Wakil Ketua III" },
+
+  // Sekretariat DPRD
+  { value: "sekretaris_dprd", label: "Sekretaris DPRD" },
+  { value: "kabag_umum", label: "Kabag Umum" },
+  { value: "kabag_humas", label: "Kabag Humas" },
+  { value: "kabag_keuangan", label: "Kabag Keuangan" },
+  { value: "kabag_persidangan", label: "Kabag Persidangan" },
+
+  // Komisi
+  { value: "komisi_i", label: "Komisi I" },
+  { value: "komisi_ii", label: "Komisi II" },
+  { value: "komisi_iii", label: "Komisi III" },
+  { value: "komisi_iv", label: "Komisi IV" },
+];
+// ---------------------------------------------------------------
 
 const KirimSurat = () => {
   // --- 1. STATE FORMULIR ---

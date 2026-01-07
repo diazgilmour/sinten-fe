@@ -7,22 +7,25 @@ import LacakSurat from "./pages/LacakSurat";
 
 // Import Halaman Admin
 import DashboardAdmin from "./pages/admin/DashboardAdmin";
-import DashboardSurat from "./pages/admin/DashboardSurat"; 
+import DashboardSurat from "./pages/admin/DashboardSurat";
 import RegisterUser from "./pages/admin/RegisterUser";
 import DaftarHadir from "./pages/admin/DaftarHadir";
 
 // Import Halaman Unit
 import UnitDashboard from "./pages/unit/UnitDashboard";
 import SuratUnit from "./pages/unit/SuratUnit";
-// UnitLayout tidak perlu di-import di sini karena sudah di-import di dalam komponen halaman masing-masing
 
 // Import Halaman Detail
 import DetailSurat from "./pages/surat/DetailSurat";
 
-// --- DAFTAR ROLE UNIT ---
+// --- DAFTAR ROLE UNIT (UPDATED) ---
+// Pastikan list ini SAMA PERSIS dengan opsi di RegisterUser
 const UNIT_ROLES = [
   "ketua_dprd",
-  "wakil_ketua_dprd",
+  // Ubah generic "wakil_ketua_dprd" menjadi spesifik:
+  "wakil_ketua_i",
+  "wakil_ketua_ii",
+  "wakil_ketua_iii",
   "sekretaris_dprd",
   "kabag_umum",
   "kabag_humas",
@@ -41,13 +44,21 @@ const ProtectedRoute = ({ children, roleAllowed }) => {
   if (!role) return <Navigate to="/login" replace />;
 
   let isAuthorized = false;
-  if (Array.isArray(roleAllowed)) {
-    isAuthorized = roleAllowed.includes(role);
-  } else {
+
+  // Jika roleAllowed adalah string (admin)
+  if (typeof roleAllowed === "string") {
     isAuthorized = role === roleAllowed;
   }
+  // Jika roleAllowed adalah Array (Unit Roles)
+  else if (Array.isArray(roleAllowed)) {
+    isAuthorized = roleAllowed.includes(role);
+  }
 
-  if (!isAuthorized) return <Navigate to="/login" replace />;
+  // Jika tidak berhak, tendang ke login (atau bisa diarahkan ke dashboard lain jika perlu)
+  if (!isAuthorized) {
+    console.warn("Akses ditolak. Role:", role, "Diizinkan:", roleAllowed);
+    return <Navigate to="/login" replace />;
+  }
 
   return children;
 };
@@ -57,7 +68,7 @@ function App() {
     <Routes>
       {/* =========================================
            RUTE PUBLIK
-          ======================================== */}
+      ======================================== */}
       <Route path="/" element={<KirimSurat />} />
       <Route path="/lacak" element={<LacakSurat />} />
       <Route path="/kirim-surat" element={<KirimSurat />} />
@@ -65,7 +76,7 @@ function App() {
 
       {/* =========================================
            RUTE ADMIN (Protected)
-          ======================================== */}
+      ======================================== */}
       <Route
         path="/admin"
         element={
@@ -93,7 +104,6 @@ function App() {
         }
       />
 
-      {/* Redirect legacy route */}
       <Route
         path="/admin/lihat-semua-surat"
         element={
@@ -131,14 +141,8 @@ function App() {
       />
 
       {/* =========================================
-           RUTE UNIT (Protected) - PERBAIKAN
-          ======================================== */}
-      
-      {/* PENTING: Ubah struktur ini menjadi Flat.
-           Karena UnitDashboard & SuratUnit sudah membungkus dirinya sendiri dengan UnitLayout,
-           kita tidak perlu membungkusnya lagi di sini dengan Route Parent. 
-      */}
-
+           RUTE UNIT (Protected) - FIXED
+      ======================================== */}
       <Route
         path="/unit/dashboard"
         element={
@@ -157,11 +161,6 @@ function App() {
         }
       />
 
-      {/* Catatan untuk DetailSurat Unit:
-           Pastikan komponen DetailSurat bisa beradaptasi dengan layout Unit atau Admin
-           atau buat halaman detail terpisah. 
-           Saat ini saya biarkan sama seperti Admin. 
-      */}
       <Route
         path="/unit/surat/:id"
         element={
@@ -173,7 +172,7 @@ function App() {
 
       {/* =========================================
            FALLBACK
-          ======================================== */}
+      ======================================== */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

@@ -39,17 +39,27 @@ const RegisterUser = () => {
   const [editingUser, setEditingUser] = useState(null);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
 
-  // --- DAFTAR ROLE ---
+  // --- DAFTAR ROLE (UPDATE: Mencakup detail Pimpinan & Jabatan) ---
   const roles = [
     { value: "", label: "Pilih Role atau Jabatan" },
     { value: "admin", label: "Admin Superuser" },
+
+    // Pimpinan
     { value: "ketua_dprd", label: "Ketua DPRD" },
-    { value: "wakil_ketua_dprd", label: "Wakil Ketua DPRD" },
+    { value: "wakil_ketua_i", label: "Wakil Ketua I" },
+    { value: "wakil_ketua_ii", label: "Wakil Ketua II" },
+    { value: "wakil_ketua_iii", label: "Wakil Ketua III" },
+
+    // Sekretariat DPRD
     { value: "sekretaris_dprd", label: "Sekretaris DPRD" },
+
+    // Kepala Bagian (Kabag)
     { value: "kabag_umum", label: "Kabag Umum" },
     { value: "kabag_humas", label: "Kabag Humas" },
     { value: "kabag_keuangan", label: "Kabag Keuangan" },
     { value: "kabag_persidangan", label: "Kabag Persidangan" },
+
+    // Komisi
     { value: "komisi_i", label: "Komisi I" },
     { value: "komisi_ii", label: "Komisi II" },
     { value: "komisi_iii", label: "Komisi III" },

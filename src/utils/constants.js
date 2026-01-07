@@ -4,28 +4,18 @@
 // 1. HELPER FORMAT TANGGAL
 // =========================================
 export const formatTanggal = (dateString) => {
-  // 1. Jika inputnya null, undefined, atau string kosong, kembali "-"
-  if (!dateString) {
-    return "-";
-  }
-
+  if (!dateString) return "-";
   try {
-    // 2. Coba buat objek Date dari string
     const date = new Date(dateString);
-
-    // 3. Periksa apakah hasilnya adalah tanggal yang valid
     if (isNaN(date.getTime())) {
       console.error("Invalid date string received:", dateString);
       return "-";
     }
-
-    // 4. Jika valid, format tanggalnya
     return new Intl.DateTimeFormat("id-ID", {
       dateStyle: "medium",
       timeStyle: "short",
     }).format(date);
   } catch (error) {
-    // 5. Tangkap error tak terduga lainnya
     console.error(
       "Error formatting date:",
       error,
@@ -57,11 +47,15 @@ export const STATUS_COLORS = {
 };
 
 // =========================================
-// 3. DAFTAR TUJUAN SURAT (Untuk Formulir Kirim)
+// 3. DAFTAR TUJUAN SURAT (UPDATED)
 // =========================================
 export const TUJUAN_SURAT = [
   { value: "ketua_dprd", label: "Ketua DPRD" },
-  { value: "wakil_ketua_dprd", label: "Wakil Ketua DPRD" },
+  // Split Wakil Ketua sesuai role baru
+  { value: "wakil_ketua_i", label: "Wakil Ketua I" },
+  { value: "wakil_ketua_ii", label: "Wakil Ketua II" },
+  { value: "wakil_ketua_iii", label: "Wakil Ketua III" },
+
   { value: "sekretaris_dprd", label: "Sekretaris DPRD" },
   { value: "kabag_umum", label: "Kabag Umum" },
   { value: "kabag_humas", label: "Kabag Humas" },
@@ -74,22 +68,24 @@ export const TUJUAN_SURAT = [
 ];
 
 // =========================================
-// 4. 🔥 PERBAIKAN BARU: GRUP ROLE & HELPER DISPOSISI
+// 4. GRUP ROLE & HELPER (UPDATED)
 // =========================================
 
 export const ROLE_GROUPS = {
-  // Grup Pimpinan (Menerima dari Admin, Bisa Disposisi ke Sekwan)
+  // Grup Pimpinan (Termasuk Ketua & Wakil Ketua I-III)
   KETUA: [
     "ketua_dprd",
-    "wakil_ketua_dprd",
-    "sekretaris_dprd", // Sesuai permintaan: sekretaris di grup ini
+    "wakil_ketua_i",
+    "wakil_ketua_ii",
+    "wakil_ketua_iii",
+    "sekretaris_dprd",
   ],
 
-  // Grup Sekretariat / Sekwan (Menerima dari Admin/Ketua, Bisa Disposisi ke Kabag)
-  SEKWAN: ["komisi_i", "komisi_ii", "komisi_iii", "komisi_iv"],
+  // Grup Komisi (Jika butuh pemisahan khusus)
+  KOMISI: ["komisi_i", "komisi_ii", "komisi_iii", "komisi_iv"],
 
-  // Grup Kepala Bagian (Menerima dari Sekwan, Akhir rantai: Setujui/Tolak saja)
-  KABAG: ["kabag_umum", "kabag_keuangan", "kabag_persidangan"],
+  // Grup Kepala Bagian
+  KABAG: ["kabag_umum", "kabag_humas", "kabag_keuangan", "kabag_persidangan"],
 };
 
 // Helper: Cek apakah user adalah Admin
@@ -98,8 +94,10 @@ export const isAdmin = (role) => role === "admin";
 // Helper: Cek apakah user termasuk Pimpinan (Ketua, Wakil, Sekretaris)
 export const isKetua = (role) => ROLE_GROUPS.KETUA.includes(role);
 
-// Helper: Cek apakah user termasuk Sekwan (Komisi I-IV)
-export const isSekwan = (role) => ROLE_GROUPS.SEKWAN.includes(role);
+// Helper: Cek apakah user termasuk Sekwan (Biasanya merujuk ke Sekretaris DPRD, atau Komisi tergantung struktur org)
+// Note: Sesuaikan logika ini jika 'sekretaris' dan 'komisi' beda bagian.
+// Disini saya buat isSekwan mencakup Komisi sesuai kode sebelumnya di constants.js
+export const isSekwan = (role) => ROLE_GROUPS.KOMISI.includes(role);
 
-// Helper: Cek apakah user termasuk Kabag (Umum, Keuangan, Persidangan)
+// Helper: Cek apakah user termasuk Kabag
 export const isKabag = (role) => ROLE_GROUPS.KABAG.includes(role);
